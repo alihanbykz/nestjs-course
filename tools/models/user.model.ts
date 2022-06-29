@@ -10,7 +10,6 @@ export class UserModel {
     email: string;
     birthDay: Date;
     password: string;
-    passwordHash: string;
     audit: AuditModel;
     roles: RoleModel[];
     groups: GroupModel[];
