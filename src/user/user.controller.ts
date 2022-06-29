@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { get } from 'http';
-import { UserCreateDto } from 'tools/dtos/user.dto';
+import { UserCreateDto, UserUpdateDto } from 'tools/dtos/user.dto';
 import { UserModel } from 'tools/models/user.model';
 import { UserService } from './user.service';
 
@@ -12,17 +12,28 @@ export class UserController {
     }
 
     @Post()  // Yeni bir kayıt oluşturmak için kullanılır
-    createUser(@Body() body: UserCreateDto){
-        return this.userService.createUser(body);
+    async createUser(@Body() body: UserCreateDto): Promise<UserModel>{
+        return await this.userService.create(body);
     }
 
     @Get()   // API endpoint get ile  istek alıyorsa bu endpoint ile veri okunabilir
-    getAllUsers(): UserModel[] {
-        return this.userService.getAllusers();
+    getAllUsers(): Promise<UserModel[]>{
+        return this.userService.findAll();
     }
 
     @Get(':id')
-    getUser(@Param() params):UserModel{
-        return this.userService.getUserById(params.id);
+    getUser(@Param() params):Promise<UserModel[]>{
+        return this.userService.findOne(params.id);
     }
+
+    @Put(':id')
+    async updateUser(@Param('id') id:string, @Body() UserUpdateDto: UserUpdateDto) :Promise<UserModel> {
+        return await this.userService.update(id, UserUpdateDto);
+    }
+
+    @Delete(':id')
+    async removeUser(@Param('id') id: string) :Promise<UserModel>{
+        return await this.userService.delete(id);
+    }
+     
 }

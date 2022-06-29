@@ -1,62 +1,45 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { createSecureServer } from 'http2';
-import { UserCreateDto } from 'tools/dtos/user.dto';
+import { Model } from 'mongoose';
+import { UserCreateDto, UserUpdateDto } from 'tools/dtos/user.dto';
+import { AuditModel } from 'tools/models/audit.model';
 import { UserModel } from 'tools/models/user.model';
 
-const result: UserModel[] = [];
+
 
 @Injectable()
 export class UserService {
+    constructor(
+        @InjectModel('User') private readonly userMongo: Model<UserModel>,
+    ) {}
 
-    getAllusers(): UserModel[] {
-        if (result.length === 0) {
-            this.creatingMockingUser(
-                {
-                    birthDay:new Date(),
-                    email:"ahmetaydin@udemy.com.tr",
-                    name:"Ahmet",
-                    surname:"Aydın",
-                    password:"123123",
+    async create(user:UserCreateDto) : Promise<UserModel> {
+        const audit = new AuditModel();
+        audit.active = true;
+        audit.createdBy = 'Admin';
+        audit.createdDate = new Date();
 
-                }
-            )
-        }
-        return result;
+        const createdUser = new this.userMongo({...user,...audit});
+
+        return await createdUser.save();
     }
 
-    getUserById(id) : any{
-        const user = result.find(data => data.id === id);
+    async findAll() : Promise<UserModel[]>{
+        return await this.userMongo.find().exec();
+    }
 
-        if(!user){
-            return 'user does not exist';
-        }
-        else{
-            return user;
-        }
+    async findOne(id: string): Promise<UserModel[]> {
+        return await this.userMongo.find({ _id: id}).exec();
     }
     
-    createUser(body:UserCreateDto) {
-        const isExist = result.find(res => { 
-            res.email === body.email;  // User daha önce oluşmuş mu  bakıyoruz
-        });
-        if (isExist) {
-            return isExist;
-        } else {                          // User yoksa 
-            this.creatingMockingUser(body);  // burada oluşturacaktır.
-            return result.slice(result.length - 1, result.length);  // resultun son eklenen değerini return ediyor. Yani oluşturduğumuz kullanıcı
-        }
+    async delete(id: string): Promise<UserModel>{
+        return await this.userMongo.findByIdAndDelete({ _id: id}).exec();
     }
 
-    private creatingMockingUser(data: any){
-        const user: UserModel = new UserModel();
-        user.birthDay = data.birthDay;
-        user.email = data.email;
-        user.name = data.name;
-        user.surname = data.surname;
-        user.password = data.password;
-
-        user.id = Math.floor(Math.random()*60 +1).toString();
-
-        result.push(user);
+    async update(id: string, user:UserUpdateDto): Promise<UserModel>{
+        let newModel = this.userMongo.findOne({ _id:id}).exec();
+        newModel = {...newModel,...user};
+        return await this.userMongo.findByIdAndUpdate(id,newModel,{new:true}).exec();
     }
 }
