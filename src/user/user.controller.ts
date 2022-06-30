@@ -7,7 +7,7 @@ import { UserService } from './user.service';
 @Controller('user')
 export class UserController {
 
-    constructor(private userService:UserService){
+    constructor(private readonly userService:UserService){
         
     }
 
@@ -17,13 +17,13 @@ export class UserController {
     }
 
     @Get()   // API endpoint get ile  istek alıyorsa bu endpoint ile veri okunabilir
-    getAllUsers(): Promise<UserModel[]>{
-        return this.userService.findAll();
+    async getAllUsers(): Promise<UserModel[]>{
+        return await this.userService.findAll();
     }
 
     @Get(':id')
-    getUser(@Param() params):Promise<UserModel[]>{
-        return this.userService.findOne(params.id);
+    async getUser(@Param() params):Promise<UserModel>{
+        return await this.userService.findOne(params.id);
     }
 
     @Put(':id')

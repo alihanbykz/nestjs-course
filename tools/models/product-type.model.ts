@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { AuditModel } from "./audit.model";
 
 export class ProductTypeModel{
@@ -5,3 +6,8 @@ export class ProductTypeModel{
     name: string;
     audit: AuditModel;
 }
+
+export const ProductTypeSchema = new mongoose.Schema({
+    name: String,
+    audit: Object,
+});

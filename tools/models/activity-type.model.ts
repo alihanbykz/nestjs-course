@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { AuditModel } from "./audit.model";
 
 export class ActivityTypeModel {
@@ -5,3 +6,8 @@ export class ActivityTypeModel {
     name: string;
     audit: AuditModel;
 }
+
+export const ActivityTypeSchema = new mongoose.Schema({
+    name: String,
+    audit: Object,
+});
