@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ActivityModel } from "./activity.model";
 import { AuditModel } from "./audit.model";
 import { InventoryModel } from "./inventory.model";
@@ -14,3 +15,13 @@ export class TicketsModel{
     activities: ActivityModel[];
     inventories: InventoryModel[];
 }
+
+export const TicketSchema = new mongoose.Schema({
+    name: String,
+    description: String,
+    audit: Object,
+    type: Object,
+    responsible: Object,
+    activities: Array,
+    inventories: Array,
+})
