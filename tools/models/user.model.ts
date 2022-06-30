@@ -16,8 +16,8 @@ export class UserModel {
     groups: GroupModel[];
 }
 
-export const UserSchema = new mongoose.Schema({
-    name: String,
+export const UserSchema = new mongoose.Schema({  // Mongoose Validation
+    name: {type: String, required: [true, 'user name is required !']}, // type belirttik, required ile birlikte alert mesajı yazdık
     surname: String,
     email: String,
     birthDay:Date,
