@@ -1,4 +1,4 @@
-export class FilterTypeModel{
+export class FilterModel{
     page: number;
     size: number;
     sort: string;
